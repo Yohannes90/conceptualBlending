@@ -1,11 +1,15 @@
-# Task 9 - Project Setup and Simple Starter Implementation of Simplex Network
+# Conceptual Blending Project
 
 ## Overview
 
-This task focuses on setting up the development environment for **Conceptual Blending Project** and implementing a simple version of the **Simplex Network** for conceptual blending. The task involved configuring the development environment with Python, MeTTa, and the OpenAI API, allowing integration with GPT-based functionality. This project is built using a simple setup with an agent-based architecture and showcases the integration of **GPT-based conceptual blending**.
+The **Conceptual Blending Project** develops an AI-driven system that integrates **MeTTa symbolic reasoning** with **GPT-based conceptual blending**. It implements four distinct conceptual blending networks:
 
-This project setup referenced the setup from the ["baby_AGITraining" repo](https://github.com/wendecoder/baby_AGITraining) with a similar project setup.
+- **Simplex Network**: Blends concepts using frame-role relationships.
+- **Mirror Network**: Maps structural similarities between concepts.
+- **Single-Scope Network**: Expands concepts within unified cognitive spaces.
+- **Double-Scope Network**: Creates bidirectional concept mappings.
 
+The system processes natural language queries and explicit concept pairs, leveraging structured reasoning to generate novel conceptual combinations stored in a MeTTa space for further analysis.
 
 ## Directory Structure
 
@@ -15,11 +19,13 @@ This project setup referenced the setup from the ["baby_AGITraining" repo](https
 |   |-- agents
 |   |   |-- gpt_agent.py          # GPT-based agent for generating blended concepts
 |   |   |-- __init__.py           # Initialize the agent module
-|   |   |-- llmagent.py           # Language Model (LLM) agent logic
+|   |   |-- llmagent.py           # Handles API authentication and requests
 |   |-- __init__.py               # Initialize the conceptual_blending module
 |   |-- main.py                   # Main logic for blending concepts and running agents
+|   |-- prompts                   # Prompt templates for different blending networks
 |-- requirements.txt             # Python dependencies for the project
-`-- run-conceptual-blending.metta # MeTTa script for reasoning and running the project
+|-- run-conceptual-blending.metta # MeTTa script for reasoning and running the project
+|-- .env                         # Environment variables for API authentication
 ```
 
 ## Setup and Run
@@ -27,8 +33,8 @@ This project setup referenced the setup from the ["baby_AGITraining" repo](https
 ### 1. Clone the repository and navigate to the project folder:
 
 ```bash
-git clone https://github.com/Yohannes90/training.git
-cd training/task_9_conceptual_blending_simplex_network/
+git clone https://github.com/iCog-Labs-Dev/conceptBlending.git
+cd conceptBlending/
 ```
 
 ### 2. Create a virtual environment and activate it:
@@ -38,60 +44,95 @@ python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 ```
 
-### 3. Install the Requirements
+### 3. Install the dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 4. Export the OpenAI API Key
+### 4. Configure API Keys
 
-You will need a valid OpenAI API key to interact with the GPT Agent.
+Create a `.env` file and add one of the following API credentials:
 
-```bash
-export OPENAI_API_KEY=<your-openai-api-key>
+```plaintext
+# ===================
+# DEVELOPMENT (GitHub Marketplace OpenAI API)
+# ===================
+GITHUB_TOKEN=your_github_marketplace_api_key_here
+
+# ===================
+# PRODUCTION (OpenAI API)
+# ===================
+OPENAI_API_KEY=your_openai_api_key_here
 ```
 
 ### 5. Run the Project
 
-Execute the project using the provided **MeTTa script** to test the conceptual blending functionality.
+Execute the project using the **MeTTa script** to test the conceptual blending functionality:
 
 ```bash
 metta run-conceptual-blending.metta
 ```
 
-Upon running the command, the output will be as follows:
+The output will be:
 
 ```plaintext
-(blendedConcept (blend music painting) auditoryCanvas)
-`(blendedConcept (blend music painting) auditoryCanvas)`
-`(blendedConcept (blend music painting) auditoryCanvas)`
-[()]
-[[`, (blendedConcept (blend music painting) auditoryCanvas), `]]
-[()]
-[]
+(simplexBlend (blend music painting) auditoryCanvas)
+(mirroredConcept (mirror light wisdom) illumination)
+(singleScope (expand nature) interconnectedVitality)
+(singleScope (expand technology) syntheticIngenuity)
+(doubleScope (expand emotion mathematics) emotionalEquations)
 ```
 
 ---
 
-## **Conceptual Blending Workflow**
+## Conceptual Blending Workflow
 
-### **1. Agents**
+### 1. Agents
 
 #### **GPT Agent**
-- **Purpose**: The **GPT agent** is responsible for handling natural language input, identifying concepts, and generating blended concepts using the **Simplex Network**.
-- **Functionality**: The GPT agent combines the concepts provided in the text and produces a **blended concept** in a structured format.
+- **Purpose**: Handles natural language input, identifies concepts, and generates blended concepts using AI.
+- **Functionality**: Combines the concepts and produces a structured **blended concept**.
 
 Example:
-For the input `How does music relate to painting?`, the GPT agent would return:
+For the input `! (gpt_simplex "Music" "Painting")`, the GPT agent would return:
+
 ```plaintext
-(blendedConcept (blend music painting) auditoryCanvas)
+(simplexBlend (blend music painting) auditoryCanvas)
 ```
 
-#### **Simplex Network**
-- **Purpose**: The **Simplex Network** approach is employed to blend two concepts in a **logical space** to produce a new **blended concept**. One concept provides the **frame**, and the other fills the **roles** within this frame.
+#### **Blending Networks**
+- **Simplex Network**: Basic concept mapping using two explicit concepts.
+- **Mirror Network**: Concept reflection using two explicit concepts.
+- **Single-Scope Network**: Expands a single concept within a unified cognitive space.
+- **Double-Scope Network**: Merges two distinct conceptual structures.
 
 #### **MeTTa Reasoning Agent**
-- **Purpose**: MeTTa serves as the **symbolic reasoner**, coordinating the blending process and ensuring that knowledge generated from the agents is stored, reasoned over, and utilized effectively.
+- **Purpose**: Acts as the **symbolic reasoner**, storing, reasoning over, and utilizing knowledge generated from agents.
+
+---
+
+## Sample Workflow
+
+```metta
+;; Import the conceptual blending module for knowledge representation
+! (import! &self conceptual_blending)
+
+;; Ask the GPT agent with two explicit concepts for different networks
+! (gpt_simplex "Music" "Painting")
+! (gpt_mirror "Light" "Wisdom")
+! (gpt_single "Nature" "Technology")
+! (gpt_double "Emotion" "Mathematics")
+
+;; Combine GPT with other agents and workflows
+;; Store the blended knowledge (GPT response) from each network into the knowledge space
+! (add-reduct &self (gpt_simplex "Music" "Painting"))
+! (add-reduct &self (gpt_mirror "Light" "Wisdom"))
+! (add-reduct &self (gpt_single "Nature" "Technology"))
+! (add-reduct &self (gpt_double "Emotion" "Mathematics"))
+
+;; Retrieve and list all knowledge stored in the current space
+! (match &self ($x) $x)
+```
 
 ---
